@@ -40,9 +40,56 @@ alert("Sai mật khẩu");
 };
 
 async function addAccount() {
-if (!monsterName || !price) {
-alert("Thiếu thông tin");
-return;
+  if (!monsterName || !price) {
+    alert("Thiếu thông tin");
+    return;
+  }
+
+  let uploadedImageUrl = "";
+
+  // 1. Nếu có chọn ảnh thì upload lên Supabase
+  if (imageFile) {
+    const fileName = `${Date.now()}-${imageFile.name}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from("accounts")
+      .upload(fileName, imageFile);
+
+    if (uploadError) {
+      alert("Upload lỗi: " + uploadError.message);
+      return;
+    }
+
+    // 2. Lấy link public của ảnh
+    const { data } = supabase.storage
+      .from("accounts")
+      .getPublicUrl(fileName);
+
+    uploadedImageUrl = data.publicUrl;
+  }
+
+  // 3. Insert vào database
+  const { error } = await supabase.from("accounts").insert([
+    {
+      monster_name: monsterName,
+      price: Number(price),
+      description,
+      image_url: uploadedImageUrl,
+    },
+  ]);
+
+  if (error) {
+    alert("Lỗi DB: " + error.message);
+    return;
+  }
+
+  // 4. Reset form
+  setMonsterName("");
+  setPrice("");
+  setDescription("");
+  setImageFile(null);
+
+  loadAccounts();
 }
 
 const { error } = await supabase.from("accounts").insert([
