@@ -11,6 +11,7 @@ const [monsterName, setMonsterName] = useState("");
 const [price, setPrice] = useState("");
 const [description, setDescription] = useState("");
 const [imageUrl, setImageUrl] = useState("");
+const [imageFile, setImageFile] = useState<File | null>(null);
 
 const [accounts, setAccounts] = useState<any[]>([]);
 
@@ -165,9 +166,14 @@ padding: "20px",
     />
 
     <input
-      placeholder="URL ảnh"
-      value={imageUrl}
-      onChange={(e) => setImageUrl(e.target.value)}
+      type="file"
+      accept="image/*"
+      onChange={(e) => {
+        if (e.target.files?.[0]) {
+          setImageFile(e.target.files[0]);
+        }
+      }}
+    />
       style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
     />
 
