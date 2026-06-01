@@ -173,7 +173,6 @@ padding: "20px",
           setImageFile(e.target.files[0]);
         }
       }}
-    />
       style={{ width: "100%", padding: "10px", marginBottom: "10px" }}
     />
 
