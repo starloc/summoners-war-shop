@@ -28,7 +28,7 @@ export default function Admin() {
   }, [loggedIn]);
 
   function login() {
-    if (password === "starloc@96") {
+    if (password === "admin123") {
       setLoggedIn(true);
     } else {
       alert("Sai mật khẩu");
@@ -60,6 +60,7 @@ export default function Admin() {
         price: Number(price),
         description,
         image_url: url,
+        created_at: new Date().toISOString(), // ✅ FIX TIME
       },
     ]);
 
@@ -78,7 +79,7 @@ export default function Admin() {
 
   if (!loggedIn) {
     return (
-      <div style={{ padding: 40 }}>
+      <div style={{ padding: 40, color: "#fff", background: "#111", minHeight: "100vh" }}>
         <h2>Admin Login</h2>
 
         <input
@@ -93,42 +94,37 @@ export default function Admin() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
+    <div style={{ padding: 20, background: "#111", minHeight: "100vh", color: "#fff" }}>
       <h1>Admin Panel</h1>
 
-      <input
-        placeholder="Monster name"
-        value={monsterName}
-        onChange={(e) => setMonsterName(e.target.value)}
-      />
+      <input placeholder="Monster name" value={monsterName}
+        onChange={(e) => setMonsterName(e.target.value)} />
 
-      <input
-        placeholder="Price"
-        value={price}
-        onChange={(e) => setPrice(e.target.value)}
-      />
+      <input placeholder="Price" value={price}
+        onChange={(e) => setPrice(e.target.value)} />
 
-      <textarea
-        placeholder="Description"
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
+      <textarea placeholder="Description" value={description}
+        onChange={(e) => setDescription(e.target.value)} />
 
-      <input
-        type="file"
+      <input type="file"
         onChange={(e) => {
           if (e.target.files?.[0]) setImageFile(e.target.files[0]);
-        }}
-      />
+        }} />
 
       <button onClick={add}>Add Account</button>
 
       <hr />
 
       {accounts.map((a) => (
-        <div key={a.id}>
-          <b>{a.monster_name}</b>
-          <p>{a.price}</p>
+        <div key={a.id} style={{ marginBottom: 10 }}>
+          <b>{a.monster_name}</b> - {a.price}
+          <br />
+          <small>
+            {a.created_at
+              ? new Date(a.created_at).toLocaleString("vi-VN")
+              : ""}
+          </small>
+          <br />
           <button onClick={() => del(a.id)}>Delete</button>
         </div>
       ))}
