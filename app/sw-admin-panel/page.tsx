@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../lib/supabase";
 
-export default function AdminPage() {
+export default function Admin() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [password, setPassword] = useState("");
 
@@ -14,7 +14,7 @@ export default function AdminPage() {
 
   const [accounts, setAccounts] = useState<any[]>([]);
 
-  async function loadAccounts() {
+  async function load() {
     const { data } = await supabase
       .from("accounts")
       .select("*")
@@ -24,7 +24,7 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    if (loggedIn) loadAccounts();
+    if (loggedIn) load();
   }, [loggedIn]);
 
   function login() {
@@ -35,131 +35,103 @@ export default function AdminPage() {
     }
   }
 
-  async function addAccount() {
-    if (!monsterName || !price) {
-      alert("Thiếu thông tin");
-      return;
-    }
-
-    let uploadedImageUrl = "";
+  async function add() {
+    let url = "";
 
     if (imageFile) {
-      const fileName = Date.now() + "-" + imageFile.name;
+      const fileName = Date.now() + imageFile.name;
 
       const { error } = await supabase.storage
         .from("accounts")
         .upload(fileName, imageFile);
 
-      if (error) {
-        alert(error.message);
-        return;
-      }
+      if (error) return alert(error.message);
 
       const { data } = supabase.storage
         .from("accounts")
         .getPublicUrl(fileName);
 
-      uploadedImageUrl = data.publicUrl;
+      url = data.publicUrl;
     }
 
-    const { error } = await supabase.from("accounts").insert([
+    await supabase.from("accounts").insert([
       {
         monster_name: monsterName,
         price: Number(price),
         description,
-        image_url: uploadedImageUrl,
+        image_url: url,
       },
     ]);
-
-    if (error) {
-      alert(error.message);
-      return;
-    }
 
     setMonsterName("");
     setPrice("");
     setDescription("");
     setImageFile(null);
 
-    loadAccounts();
+    load();
   }
 
-  async function deleteAccount(id: string) {
+  async function del(id: string) {
     await supabase.from("accounts").delete().eq("id", id);
-    loadAccounts();
+    load();
   }
 
   if (!loggedIn) {
     return (
-      <main style={{ minHeight: "100vh", background: "#111", color: "#fff", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <div style={{ background: "#1b1b1b", padding: 30, borderRadius: 12, width: 320 }}>
-          <h2>Admin Login</h2>
+      <div style={{ padding: 40 }}>
+        <h2>Admin Login</h2>
 
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            style={{ width: "100%", padding: 12, marginBottom: 12 }}
-          />
+        <input
+          type="password"
+          placeholder="Password"
+          onChange={(e) => setPassword(e.target.value)}
+        />
 
-          <button onClick={login} style={{ width: "100%", padding: 12 }}>
-            Đăng nhập
-          </button>
-        </div>
-      </main>
+        <button onClick={login}>Login</button>
+      </div>
     );
   }
 
   return (
-    <main style={{ minHeight: "100vh", background: "#111", color: "#fff", padding: 20 }}>
+    <div style={{ padding: 20 }}>
       <h1>Admin Panel</h1>
 
-      <div style={{ background: "#1b1b1b", padding: 20, borderRadius: 12, marginBottom: 20 }}>
-        <input
-          placeholder="Tên Monster"
-          value={monsterName}
-          onChange={(e) => setMonsterName(e.target.value)}
-          style={{ width: "100%", padding: 10, marginBottom: 10 }}
-        />
+      <input
+        placeholder="Monster name"
+        value={monsterName}
+        onChange={(e) => setMonsterName(e.target.value)}
+      />
 
-        <input
-          placeholder="Giá"
-          value={price}
-          onChange={(e) => setPrice(e.target.value)}
-          style={{ width: "100%", padding: 10, marginBottom: 10 }}
-        />
+      <input
+        placeholder="Price"
+        value={price}
+        onChange={(e) => setPrice(e.target.value)}
+      />
 
-        <textarea
-          placeholder="Mô tả"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          style={{ width: "100%", padding: 10, marginBottom: 10 }}
-        />
+      <textarea
+        placeholder="Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
 
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            if (e.target.files?.[0]) setImageFile(e.target.files[0]);
-          }}
-          style={{ width: "100%", marginBottom: 10 }}
-        />
+      <input
+        type="file"
+        onChange={(e) => {
+          if (e.target.files?.[0]) setImageFile(e.target.files[0]);
+        }}
+      />
 
-        <button onClick={addAccount} style={{ padding: 12 }}>
-          Thêm Account
-        </button>
-      </div>
+      <button onClick={add}>Add Account</button>
 
-      {accounts.map((acc) => (
-        <div key={acc.id} style={{ background: "#1b1b1b", padding: 15, borderRadius: 12, marginBottom: 12 }}>
-          <strong>{acc.monster_name}</strong>
-          <div>{Number(acc.price).toLocaleString("vi-VN")} VNĐ</div>
+      <hr />
 
-          <button onClick={() => deleteAccount(acc.id)} style={{ marginTop: 10 }}>
-            Xóa
-          </button>
+      {accounts.map((a) => (
+        <div key={a.id}>
+          <b>{a.monster_name}</b>
+          <p>{a.price}</p>
+          <button onClick={() => del(a.id)}>Delete</button>
         </div>
       ))}
-    </main>
+    </div>
   );
 }
