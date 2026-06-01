@@ -122,6 +122,5 @@ Summoners War Starter Accounts </h1>
   </div>
 </main>
 ```
-
 );
 }
