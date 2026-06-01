@@ -1,6 +1,8 @@
 import { supabase } from "../lib/supabase";
+import { useState } from "react";
 
-export default async function Home() {
+export default function Home() {
+const [preview, setPreview] = useState<string | null>(null);
 const { data: accounts } = await supabase
 .from("accounts")
 .select("*")
@@ -86,11 +88,13 @@ Summoners War Starter Shop </h1>
           <img
             src={acc.image_url}
             alt={acc.monster_name}
+            onClick={() => setPreview(acc.image_url)}
             style={{
               width: "100%",
               height: "260px",
               objectFit: "cover",
               display: "block",
+              cursor: "pointer",
             }}
           />
         )}
@@ -108,7 +112,11 @@ Summoners War Starter Shop </h1>
           >
             {acc.monster_name}
           </h2>
-
+          <p style={{ color: "#aaa", fontSize: "12px", marginBottom: "6px" }}>
+              {acc.created_at
+                ? new Date(acc.created_at).toLocaleString("vi-VN")
+                : "Không có ngày"}
+          </p>
           <div
             style={{
               fontSize: "28px",
@@ -172,6 +180,32 @@ Summoners War Starter Shop </h1>
   >
     Zalo
   </a>
+    {preview && (
+  <div
+    onClick={() => setPreview(null)}
+    style={{
+      position: "fixed",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      background: "rgba(0,0,0,0.85)",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      zIndex: 9999,
+    }}
+  >
+    <img
+      src={preview}
+      style={{
+        maxWidth: "90%",
+        maxHeight: "90%",
+        borderRadius: "12px",
+      }}
+    />
+  </div>
+)}
 </main>
 
 );
