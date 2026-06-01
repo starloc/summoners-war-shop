@@ -20,9 +20,7 @@ const { data } = await supabase
 .select("*")
 .order("created_at", { ascending: false });
 
-```
 setAccounts(data || []);
-```
 
 }
 
@@ -46,7 +44,6 @@ alert("Thiếu thông tin");
 return;
 }
 
-```
 const { error } = await supabase.from("accounts").insert([
   {
     monster_name: monsterName,
@@ -67,22 +64,18 @@ setDescription("");
 setImageUrl("");
 
 loadAccounts();
-```
 
 }
 
 async function deleteAccount(id: string) {
 if (!confirm("Xóa account này?")) return;
 
-```
 await supabase
   .from("accounts")
   .delete()
   .eq("id", id);
 
 loadAccounts();
-```
-
 }
 
 if (!loggedIn) {
@@ -106,7 +99,6 @@ width: "320px",
 }}
 > <h2>Admin Login</h2>
 
-```
       <input
         type="password"
         value={password}
@@ -131,8 +123,6 @@ width: "320px",
     </div>
   </main>
 );
-```
-
 }
 
 return (
@@ -145,7 +135,6 @@ padding: "20px",
 }}
 > <h1>Admin Panel</h1>
 
-```
   <div
     style={{
       background: "#1b1b1b",
