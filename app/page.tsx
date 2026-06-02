@@ -3,13 +3,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-function getAccountAge(date: string) {
+function getAccountAge(date: string, currentTime: Date) {
   if (!date) return 0;
 
   const created = new Date(date);
-  const today = new Date();
-
-  const diff = today.getTime() - created.getTime();
+  const diff = currentTime.getTime() - created.getTime();
 
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
@@ -19,6 +17,7 @@ export default function Home() {
   const [preview, setPreview] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     async function load() {
@@ -33,6 +32,15 @@ export default function Home() {
     load();
   }, []);
 
+  // Tự động cập nhật thời gian mỗi 1 giờ
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 3600000); // 1 giờ = 3600000ms
+
+    return () => clearInterval(interval);
+  }, []);
+
   const filteredAccounts = accounts
     .filter(acc => 
       acc.monster_name?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -40,8 +48,8 @@ export default function Home() {
     .sort((a, b) => {
       if (sortBy === "cheapest") return a.price - b.price;
       if (sortBy === "expensive") return b.price - a.price;
-      if (sortBy === "oldest") return getAccountAge(b.account_created_date) - getAccountAge(a.account_created_date);
-      return 0; // newest default
+      if (sortBy === "oldest") return getAccountAge(b.account_created_date, currentTime) - getAccountAge(a.account_created_date, currentTime);
+      return 0;
     });
 
   return (
@@ -53,7 +61,7 @@ export default function Home() {
             <span className="logo-icon">⚔️</span>
             <div>
               <h1>Summoners War Shop</h1>
-              <p>Clone sự kiện 12 năm, còn đủ tài nguyên các map</p>
+              <p>Starter • LD • Reroll Accounts</p>
             </div>
           </div>
           <a className="zalo-btn" href="https://zalo.me/0948258616">
@@ -118,7 +126,7 @@ export default function Home() {
               {/* Account Code */}
               {acc.account_code && (
                 <div className="account-code">
-                  Mã số: {acc.account_code}
+                  🔑 {acc.account_code}
                 </div>
               )}
 
@@ -126,7 +134,7 @@ export default function Home() {
               <div className="details">
                 {acc.wind_phoenix && (
                   <div className="detail-item">
-                    <span className="detail-icon">🦅</span>
+                    <img src="/icons/phoenix.png" alt="" className="icon" />
                     <span className="detail-label">Wind Phoenix:</span>
                     <span className="detail-value">{acc.wind_phoenix}</span>
                   </div>
@@ -134,16 +142,16 @@ export default function Home() {
                 
                 {acc.ancient_transcendence_scroll !== null && acc.ancient_transcendence_scroll !== undefined && (
                   <div className="detail-item">
-                    <span className="detail-icon">📜</span>
-                    <span className="detail-label">Sách 12 năm:</span>
+                    <img src="/icons/ancient-scroll.png" alt="" className="icon" />
+                    <span className="detail-label">Ancient Transcendence:</span>
                     <span className="detail-value">{acc.ancient_transcendence_scroll}</span>
                   </div>
                 )}
                 
                 {acc.ld_scroll !== null && acc.ld_scroll !== undefined && (
                   <div className="detail-item">
-                    <span className="detail-icon">✨</span>
-                    <span className="detail-label">Sách LnD:</span>
+                    <img src="/icons/ld-scroll.png" alt="" className="icon" />
+                    <span className="detail-label">LD Scroll:</span>
                     <span className="detail-value">{acc.ld_scroll}</span>
                   </div>
                 )}
@@ -156,7 +164,7 @@ export default function Home() {
               <div className="meta">
                 {acc.account_created_date && (
                   <span className="age">
-                    ⏰ Đã tạo được: {getAccountAge(acc.account_created_date)} ngày
+                    ⏰ Đã tạo được: {getAccountAge(acc.account_created_date, currentTime)} ngày
                   </span>
                 )}
                 <span className="date">
@@ -479,10 +487,11 @@ export default function Home() {
           padding-top: 6px;
         }
 
-        .detail-icon {
-          font-size: 16px;
+        .icon {
           width: 20px;
-          text-align: center;
+          height: 20px;
+          object-fit: contain;
+          flex-shrink: 0;
         }
 
         .detail-label {
