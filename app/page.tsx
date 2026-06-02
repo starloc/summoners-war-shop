@@ -8,8 +8,12 @@ function getAccountAge(date: string) {
 
   const created = new Date(date);
   const today = new Date();
+  
+  // Reset giờ phút giây về 0 để chỉ so sánh ngày (theo giờ địa phương GMT+7)
+  const createdDate = new Date(created.getFullYear(), created.getMonth(), created.getDate());
+  const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
-  const diff = today.getTime() - created.getTime();
+  const diff = todayDate.getTime() - createdDate.getTime();
 
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
@@ -19,7 +23,7 @@ export default function Home() {
   const [preview, setPreview] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
-  const [, forceUpdate] = useState(0); // Force re-render
+  const [, forceUpdate] = useState(0);
 
   useEffect(() => {
     async function load() {
@@ -34,11 +38,11 @@ export default function Home() {
     load();
   }, []);
 
-  // Tự động cập nhật mỗi phút - force re-render
+  // Tự động cập nhật mỗi phút
   useEffect(() => {
     const interval = setInterval(() => {
-      forceUpdate(prev => prev + 1); // Force component re-render
-    }, 60000); // 1 phút
+      forceUpdate(prev => prev + 1);
+    }, 60000);
 
     return () => clearInterval(interval);
   }, []);
@@ -213,7 +217,6 @@ export default function Home() {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
         }
 
-        /* HEADER */
         .header {
           background: #161b22;
           border-bottom: 1px solid #21262d;
@@ -274,7 +277,6 @@ export default function Home() {
           background: #2ea043;
         }
 
-        /* TOOLBAR */
         .toolbar {
           background: #161b22;
           border-bottom: 1px solid #21262d;
@@ -349,7 +351,6 @@ export default function Home() {
           white-space: nowrap;
         }
 
-        /* GRID */
         .grid {
           display: grid;
           grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -379,7 +380,6 @@ export default function Home() {
           }
         }
 
-        /* CARD */
         .card {
           background: #161b22;
           border: 1px solid #21262d;
@@ -454,7 +454,6 @@ export default function Home() {
           margin-bottom: 10px;
         }
 
-        /* ACCOUNT CODE */
         .account-code {
           background: rgba(240, 192, 96, 0.1);
           border: 1px solid rgba(240, 192, 96, 0.2);
@@ -466,7 +465,6 @@ export default function Home() {
           margin-bottom: 10px;
         }
 
-        /* DETAILS */
         .details {
           background: #0d1117;
           border: 1px solid #21262d;
@@ -549,14 +547,12 @@ export default function Home() {
           background: #2ea043;
         }
 
-        /* EMPTY */
         .empty {
           text-align: center;
           padding: 40px;
           color: #484f58;
         }
 
-        /* FOOTER */
         .footer {
           text-align: center;
           padding: 32px 16px;
@@ -576,7 +572,6 @@ export default function Home() {
           text-decoration: none;
         }
 
-        /* MODAL */
         .modal {
           position: fixed;
           inset: 0;
