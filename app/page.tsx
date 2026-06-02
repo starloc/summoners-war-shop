@@ -115,6 +115,33 @@ export default function Home() {
                 {Number(acc.price).toLocaleString("vi-VN")}₫
               </div>
 
+              {/* Account Details */}
+              <div className="details">
+                {acc.wind_phoenix && (
+                  <div className="detail-item">
+                    <span className="detail-icon">🦅</span>
+                    <span className="detail-label">Wind Phoenix:</span>
+                    <span className="detail-value">{acc.wind_phoenix}</span>
+                  </div>
+                )}
+                
+                {acc.ancient_transcendence_scroll !== null && acc.ancient_transcendence_scroll !== undefined && (
+                  <div className="detail-item">
+                    <span className="detail-icon">📜</span>
+                    <span className="detail-label">Ancient Transcendence:</span>
+                    <span className="detail-value">{acc.ancient_transcendence_scroll}x</span>
+                  </div>
+                )}
+                
+                {acc.ld_scroll !== null && acc.ld_scroll !== undefined && (
+                  <div className="detail-item">
+                    <span className="detail-icon">✨</span>
+                    <span className="detail-label">LD Scroll:</span>
+                    <span className="detail-value">{acc.ld_scroll}x</span>
+                  </div>
+                )}
+              </div>
+
               {acc.description && (
                 <p className="desc">{acc.description}</p>
               )}
@@ -408,6 +435,45 @@ export default function Home() {
           font-weight: 700;
           color: #3fb950;
           margin-bottom: 10px;
+        }
+
+        /* DETAILS */
+        .details {
+          background: #0d1117;
+          border: 1px solid #21262d;
+          border-radius: 6px;
+          padding: 10px;
+          margin-bottom: 10px;
+        }
+
+        .detail-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 4px 0;
+          font-size: 13px;
+        }
+
+        .detail-item + .detail-item {
+          border-top: 1px solid #21262d;
+          margin-top: 4px;
+          padding-top: 6px;
+        }
+
+        .detail-icon {
+          font-size: 16px;
+          width: 20px;
+          text-align: center;
+        }
+
+        .detail-label {
+          color: #8b949e;
+          flex: 1;
+        }
+
+        .detail-value {
+          color: #c9d1d9;
+          font-weight: 600;
         }
 
         .desc {
