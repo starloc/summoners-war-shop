@@ -54,6 +54,7 @@ export default function Home() {
             <div>
               <h1>Summoners War Shop</h1>
               <p>Starter • LD • Reroll Accounts</p>
+              <p>Tài khoản clone sự kiện 12 năm, còn đủ tài nguyên các map</p>
             </div>
           </div>
           <a className="zalo-btn" href="https://zalo.me/0948258616">
