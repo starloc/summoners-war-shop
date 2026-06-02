@@ -73,11 +73,88 @@ export default function Admin() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  async function add() {
-    if (!monsterName || !price) {
-      alert("Vui lòng điền đầy đủ thông tin!");
+async function add() {
+  if (!monsterName || !price) {
+    alert("Vui lòng điền đầy đủ thông tin!");
+    return;
+  }
+
+  let url = "";
+
+  if (imageFile) {
+    const fileName = Date.now() + "-" + imageFile.name;
+
+    const { error } = await supabase.storage
+      .from("accounts")
+      .upload(fileName, imageFile);
+
+    if (error) return alert(error.message);
+
+    const { data } = supabase.storage
+      .from("accounts")
+      .getPublicUrl(fileName);
+
+    url = data.publicUrl;
+  }
+
+  if (editingId) {
+    // Update existing account
+    const updateData: any = {
+      monster_name: monsterName,
+      price: Number(price),
+      description,
+      account_created_date: accountDate,
+      wind_phoenix: windPhoenix,
+      ancient_transcendence_scroll: ancientScroll ? Number(ancientScroll) : null,
+      ld_scroll: ldScroll ? Number(ldScroll) : null,
+      account_code: accountCode,
+    };
+
+    if (url) {
+      updateData.image_url = url;
+    }
+
+    console.log("Updating account:", editingId, updateData);
+
+    const { error } = await supabase
+      .from("accounts")
+      .update(updateData)
+      .eq("id", editingId);
+
+    if (error) {
+      console.error("Update error:", error);
+      alert("Lỗi cập nhật: " + error.message);
       return;
     }
+    
+    console.log("Update successful");
+  } else {
+    // Insert new account
+    const { error } = await supabase.from("accounts").insert([
+      {
+        monster_name: monsterName,
+        price: Number(price),
+        description,
+        image_url: url,
+        created_at: new Date().toISOString(),
+        account_created_date: accountDate,
+        wind_phoenix: windPhoenix,
+        ancient_transcendence_scroll: ancientScroll ? Number(ancientScroll) : null,
+        ld_scroll: ldScroll ? Number(ldScroll) : null,
+        account_code: accountCode,
+      },
+    ]);
+
+    if (error) {
+      console.error("Insert error:", error);
+      alert("Lỗi thêm: " + error.message);
+      return;
+    }
+  }
+
+  resetForm();
+  load();
+}
 
     let url = "";
 
