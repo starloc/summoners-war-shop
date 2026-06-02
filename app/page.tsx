@@ -3,6 +3,20 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
+function getAccountAge(date: string) {
+  if (!date) return 0;
+
+  const created = new Date(date);
+  const today = new Date();
+
+  const diff =
+    today.getTime() - created.getTime();
+
+  return Math.floor(
+    diff / (1000 * 60 * 60 * 24)
+  );
+}
+
 export default function Home() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
@@ -52,6 +66,15 @@ export default function Home() {
               </span>
 
               <p className="desc">{acc.description}</p>
+
+              <p
+                style={{
+                  color: "#f2c078",
+                  fontWeight: "bold",
+                }}
+              >
+                Tuổi acc: {getAccountAge(acc.account_created_date)} ngày
+              </p>
 
               <small className="time">
                 {acc.created_at
