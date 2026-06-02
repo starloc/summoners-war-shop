@@ -10,6 +10,7 @@ export default function Admin() {
   const [monsterName, setMonsterName] = useState("");
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
+  const [accountDate, setAccountDate] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const [accounts, setAccounts] = useState<any[]>([]);
@@ -105,6 +106,17 @@ export default function Admin() {
 
       <textarea placeholder="Description" value={description}
         onChange={(e) => setDescription(e.target.value)} />
+      
+      <input
+        type="date"
+        value={accountDate}
+        onChange={(e) => setAccountDate(e.target.value)}
+        style={{
+          width: "100%",
+          padding: "10px",
+          marginTop: "10px",
+        }}
+      />
 
       <input type="file"
         onChange={(e) => {
