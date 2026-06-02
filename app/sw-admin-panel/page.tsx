@@ -11,6 +11,9 @@ export default function Admin() {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [accountDate, setAccountDate] = useState("");
+  const [windPhoenix, setWindPhoenix] = useState("");
+  const [ancientScroll, setAncientScroll] = useState("");
+  const [ldScroll, setLdScroll] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const [accounts, setAccounts] = useState<any[]>([]);
@@ -71,6 +74,9 @@ export default function Admin() {
         image_url: url,
         created_at: new Date().toISOString(),
         account_created_date: accountDate,
+        wind_phoenix: windPhoenix,
+        ancient_transcendence_scroll: ancientScroll ? Number(ancientScroll) : null,
+        ld_scroll: ldScroll ? Number(ldScroll) : null,
       },
     ]);
 
@@ -78,6 +84,9 @@ export default function Admin() {
     setPrice("");
     setDescription("");
     setAccountDate("");
+    setWindPhoenix("");
+    setAncientScroll("");
+    setLdScroll("");
     setImageFile(null);
 
     load();
@@ -188,6 +197,41 @@ export default function Admin() {
             )}
           </div>
         </div>
+
+        {/* New Fields */}
+        <div style={styles.formGrid}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>🦅 Wind Phoenix</label>
+            <input 
+              placeholder="VD: Có, Không, hoặc tên cụ thể"
+              value={windPhoenix}
+              onChange={(e) => setWindPhoenix(e.target.value)}
+              style={styles.input}
+            />
+          </div>
+          
+          <div style={styles.formGroup}>
+            <label style={styles.label}>📜 Ancient Transcendence Scroll</label>
+            <input 
+              placeholder="Số lượng"
+              type="number"
+              value={ancientScroll}
+              onChange={(e) => setAncientScroll(e.target.value)}
+              style={styles.input}
+            />
+          </div>
+          
+          <div style={styles.formGroup}>
+            <label style={styles.label}>✨ LD Scroll</label>
+            <input 
+              placeholder="Số lượng"
+              type="number"
+              value={ldScroll}
+              onChange={(e) => setLdScroll(e.target.value)}
+              style={styles.input}
+            />
+          </div>
+        </div>
         
         <div style={styles.formGroup}>
           <label style={styles.label}>Mô Tả</label>
@@ -229,6 +273,26 @@ export default function Admin() {
                   <div style={styles.priceTag}>
                     {a.price?.toLocaleString("vi-VN")} VND
                   </div>
+                  
+                  {/* Account Details */}
+                  <div style={styles.accountDetails}>
+                    {a.wind_phoenix && (
+                      <div style={styles.detailRow}>
+                        🦅 Wind Phoenix: {a.wind_phoenix}
+                      </div>
+                    )}
+                    {a.ancient_transcendence_scroll !== null && a.ancient_transcendence_scroll !== undefined && (
+                      <div style={styles.detailRow}>
+                        📜 Ancient Scroll: {a.ancient_transcendence_scroll}x
+                      </div>
+                    )}
+                    {a.ld_scroll !== null && a.ld_scroll !== undefined && (
+                      <div style={styles.detailRow}>
+                        ✨ LD Scroll: {a.ld_scroll}x
+                      </div>
+                    )}
+                  </div>
+
                   {a.description && (
                     <p style={styles.description}>{a.description}</p>
                   )}
@@ -504,6 +568,17 @@ const styles: Record<string, React.CSSProperties> = {
     fontSize: "16px",
     fontWeight: "bold",
     marginBottom: "10px",
+  },
+  accountDetails: {
+    background: "rgba(0, 0, 0, 0.3)",
+    padding: "10px",
+    borderRadius: "8px",
+    marginBottom: "10px",
+    fontSize: "13px",
+  },
+  detailRow: {
+    padding: "3px 0",
+    color: "rgba(255, 255, 255, 0.8)",
   },
   description: {
     color: "rgba(255, 255, 255, 0.6)",
