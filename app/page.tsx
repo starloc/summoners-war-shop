@@ -128,16 +128,16 @@ export default function Home() {
                 {acc.ancient_transcendence_scroll !== null && acc.ancient_transcendence_scroll !== undefined && (
                   <div className="detail-item">
                     <span className="detail-icon">📜</span>
-                    <span className="detail-label">Ancient Transcendence:</span>
-                    <span className="detail-value">{acc.ancient_transcendence_scroll}x</span>
+                    <span className="detail-label">Sách 12 năm:</span>
+                    <span className="detail-value">{acc.ancient_transcendence_scroll} cuộn </span>
                   </div>
                 )}
                 
                 {acc.ld_scroll !== null && acc.ld_scroll !== undefined && (
                   <div className="detail-item">
                     <span className="detail-icon">✨</span>
-                    <span className="detail-label">LD Scroll:</span>
-                    <span className="detail-value">{acc.ld_scroll}x</span>
+                    <span className="detail-label">Sách LnD:</span>
+                    <span className="detail-value">{acc.ld_scroll} cuộn </span>
                   </div>
                 )}
               </div>
