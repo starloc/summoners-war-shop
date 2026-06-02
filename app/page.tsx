@@ -71,7 +71,7 @@ export default function Home() {
             </div>
           </div>
           <a className="zalo-btn" href="https://zalo.me/0948258616">
-            <span>💬</span> Liên hệ Zalo
+            <span></span> Liên hệ Zalo
           </a>
         </div>
       </div>
