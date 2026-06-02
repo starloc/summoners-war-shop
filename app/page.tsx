@@ -17,7 +17,6 @@ function getAccountAge(date: string) {
 export default function Home() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
-  const [selectedFilter, setSelectedFilter] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -494,16 +493,22 @@ export default function Home() {
         .card-image-wrapper {
           position: relative;
           width: 100%;
-          height: 220px;
+          height: 280px;
           overflow: hidden;
           cursor: pointer;
+          background: rgba(0, 0, 0, 0.3);
+          display: flex;
+          align-items: center;
+          justify-content: center;
         }
 
         .card-image {
           width: 100%;
           height: 100%;
-          object-fit: cover;
+          object-fit: contain;
           transition: transform 0.3s;
+          padding: 10px;
+          box-sizing: border-box;
         }
 
         .card:hover .card-image {
@@ -533,6 +538,7 @@ export default function Home() {
           color: white;
           font-size: 16px;
           font-weight: 500;
+          border-radius: 16px 16px 0 0;
         }
 
         .card-image-wrapper:hover .card-image-overlay {
