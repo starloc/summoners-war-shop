@@ -3,13 +3,11 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-function getAccountAge(date: string) {
+function getAccountAge(date: string, currentTime: Date) {
   if (!date) return 0;
 
   const created = new Date(date);
-  const today = new Date();
-
-  const diff = today.getTime() - created.getTime();
+  const diff = currentTime.getTime() - created.getTime();
 
   return Math.floor(diff / (1000 * 60 * 60 * 24));
 }
@@ -19,6 +17,7 @@ export default function Home() {
   const [preview, setPreview] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
     async function load() {
@@ -33,6 +32,15 @@ export default function Home() {
     load();
   }, []);
 
+  // Tự động cập nhật thời gian mỗi 1 giờ
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 3600000); // 1 giờ = 3600000ms
+
+    return () => clearInterval(interval);
+  }, []);
+
   const filteredAccounts = accounts
     .filter(acc => 
       acc.monster_name?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -40,7 +48,7 @@ export default function Home() {
     .sort((a, b) => {
       if (sortBy === "cheapest") return a.price - b.price;
       if (sortBy === "expensive") return b.price - a.price;
-      if (sortBy === "oldest") return getAccountAge(b.account_created_date) - getAccountAge(a.account_created_date);
+      if (sortBy === "oldest") return getAccountAge(b.account_created_date, currentTime) - getAccountAge(a.account_created_date, currentTime);
       return 0; // newest default
     });
 
@@ -156,7 +164,7 @@ export default function Home() {
               <div className="meta">
                 {acc.account_created_date && (
                   <span className="age">
-                    ⏰ Đã tạo được: {getAccountAge(acc.account_created_date)} ngày
+                    ⏰ Đã tạo được: {getAccountAge(acc.account_created_date, currentTime)} ngày
                   </span>
                 )}
                 <span className="date">
