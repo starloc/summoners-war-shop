@@ -62,6 +62,7 @@ export default function Admin() {
         description,
         image_url: url,
         created_at: new Date().toISOString(), // ✅ FIX TIME
+        account_created_date: accountDate,
       },
     ]);
 
