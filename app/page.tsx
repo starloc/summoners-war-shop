@@ -36,7 +36,7 @@ export default function Home() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentTime(new Date());
-    }, 3600000); // 1 giờ = 3600000ms
+    }, 60000); // 1 phút = 3600000ms
 
     return () => clearInterval(interval);
   }, []);
