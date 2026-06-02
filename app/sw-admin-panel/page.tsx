@@ -94,9 +94,57 @@ export default function Admin() {
       </div>
     );
   }
-
+      
   return (
-    <div style={{ padding: 20, background: "#111", minHeight: "100vh", color: "#fff" }}>
+    <div
+      style={{
+        minHeight: "100vh",
+        background: "#0b0f14",
+        color: "#fff",
+        padding: "30px",
+        fontFamily: "Arial, sans-serif",
+      }}
+    >
+
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginBottom: "25px",
+      }}
+    >
+      <div>
+        <h1
+          style={{
+            margin: 0,
+            color: "#f2c078",
+          }}
+        >
+          Summoners War Admin
+        </h1>
+    
+        <p
+          style={{
+            color: "#999",
+            marginTop: 5,
+          }}
+        >
+          Quản lý account Summoners War
+        </p>
+      </div>
+    
+      <div
+        style={{
+          background: "#171c24",
+          padding: "12px 20px",
+          borderRadius: "12px",
+        }}
+      >
+        Tổng Account: {accounts.length}
+      </div>
+    </div>
+      
       <h1>Admin Panel</h1>
 
       <input placeholder="Monster name" value={monsterName}
