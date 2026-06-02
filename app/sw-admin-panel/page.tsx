@@ -11,9 +11,9 @@ export default function Admin() {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [accountDate, setAccountDate] = useState("");
-  const [windPhoenix, setWindPhoenix] = useState("");
-  const [ancientScroll, setAncientScroll] = useState("");
-  const [ldScroll, setLdScroll] = useState("");
+  const [windPhoenix, setWindPhoenix] = useState("Có"); // Mặc định là "Có"
+  const [ancientScroll, setAncientScroll] = useState("88"); // Mặc định 88
+  const [ldScroll, setLdScroll] = useState("1"); // Mặc định 1
   const [accountCode, setAccountCode] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -82,13 +82,14 @@ export default function Admin() {
       },
     ]);
 
+    // Reset form - giữ lại giá trị mặc định
     setMonsterName("");
     setPrice("");
     setDescription("");
     setAccountDate("");
-    setWindPhoenix("");
-    setAncientScroll("");
-    setLdScroll("");
+    setWindPhoenix("Có"); // Reset về mặc định
+    setAncientScroll("88"); // Reset về mặc định
+    setLdScroll("1"); // Reset về mặc định
     setAccountCode("");
     setImageFile(null);
 
