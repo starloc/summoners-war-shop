@@ -11,9 +11,9 @@ export default function Admin() {
   const [price, setPrice] = useState("");
   const [description, setDescription] = useState("");
   const [accountDate, setAccountDate] = useState("");
-  const [windPhoenix, setWindPhoenix] = useState("Có"); // Mặc định là "Có"
-  const [ancientScroll, setAncientScroll] = useState("88"); // Mặc định 88
-  const [ldScroll, setLdScroll] = useState("1"); // Mặc định 1
+  const [windPhoenix, setWindPhoenix] = useState("Có");
+  const [ancientScroll, setAncientScroll] = useState("88");
+  const [ldScroll, setLdScroll] = useState("1");
   const [accountCode, setAccountCode] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
 
@@ -82,14 +82,14 @@ export default function Admin() {
       },
     ]);
 
-    // Reset form - giữ lại giá trị mặc định
+    // Reset form - giữ nguyên ngày tạo account
     setMonsterName("");
     setPrice("");
     setDescription("");
-    setAccountDate("");
-    setWindPhoenix("Có"); // Reset về mặc định
-    setAncientScroll("88"); // Reset về mặc định
-    setLdScroll("1"); // Reset về mặc định
+    // Không reset accountDate
+    setWindPhoenix("Có");
+    setAncientScroll("88");
+    setLdScroll("1");
     setAccountCode("");
     setImageFile(null);
 
@@ -325,18 +325,16 @@ export default function Admin() {
                   {a.description && (
                     <p style={styles.description}>{a.description}</p>
                   )}
+                  
+                  {/* Chỉ hiển thị ngày tạo account, ẩn ngày đăng */}
                   <div style={styles.meta}>
-                    <span style={styles.dateText}>
-                      📅 {a.created_at
-                        ? new Date(a.created_at).toLocaleDateString("vi-VN")
-                        : "N/A"}
-                    </span>
                     {a.account_created_date && (
                       <span style={styles.dateText}>
                         🎂 Account: {new Date(a.account_created_date).toLocaleDateString("vi-VN")}
                       </span>
                     )}
                   </div>
+                  
                   <button 
                     onClick={() => del(a.id)} 
                     style={styles.deleteButton}
