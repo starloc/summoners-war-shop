@@ -115,6 +115,13 @@ export default function Home() {
                 {Number(acc.price).toLocaleString("vi-VN")}₫
               </div>
 
+              {/* Account Code */}
+              {acc.account_code && (
+                <div className="account-code">
+                  🔑 {acc.account_code}
+                </div>
+              )}
+
               {/* Account Details */}
               <div className="details">
                 {acc.wind_phoenix && (
@@ -128,16 +135,16 @@ export default function Home() {
                 {acc.ancient_transcendence_scroll !== null && acc.ancient_transcendence_scroll !== undefined && (
                   <div className="detail-item">
                     <span className="detail-icon">📜</span>
-                    <span className="detail-label">Sách 12 năm:</span>
-                    <span className="detail-value">{acc.ancient_transcendence_scroll} cuộn </span>
+                    <span className="detail-label">Ancient Transcendence:</span>
+                    <span className="detail-value">{acc.ancient_transcendence_scroll}</span>
                   </div>
                 )}
                 
                 {acc.ld_scroll !== null && acc.ld_scroll !== undefined && (
                   <div className="detail-item">
                     <span className="detail-icon">✨</span>
-                    <span className="detail-label">Sách LnD:</span>
-                    <span className="detail-value">{acc.ld_scroll} cuộn </span>
+                    <span className="detail-label">LD Scroll:</span>
+                    <span className="detail-value">{acc.ld_scroll}</span>
                   </div>
                 )}
               </div>
@@ -434,6 +441,18 @@ export default function Home() {
           font-size: 18px;
           font-weight: 700;
           color: #3fb950;
+          margin-bottom: 10px;
+        }
+
+        /* ACCOUNT CODE */
+        .account-code {
+          background: rgba(240, 192, 96, 0.1);
+          border: 1px solid rgba(240, 192, 96, 0.2);
+          padding: 6px 10px;
+          border-radius: 4px;
+          font-size: 13px;
+          color: #f0c060;
+          font-family: monospace;
           margin-bottom: 10px;
         }
 
