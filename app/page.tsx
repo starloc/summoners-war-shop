@@ -17,6 +17,8 @@ function getAccountAge(date: string) {
 export default function Home() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
 
   useEffect(() => {
     async function load() {
@@ -31,50 +33,106 @@ export default function Home() {
     load();
   }, []);
 
+  const filteredAccounts = accounts
+    .filter(acc => 
+      acc.monster_name?.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      if (sortBy === "cheapest") return a.price - b.price;
+      if (sortBy === "expensive") return b.price - a.price;
+      if (sortBy === "oldest") return getAccountAge(b.account_created_date) - getAccountAge(a.account_created_date);
+      return 0; // newest default
+    });
+
   return (
     <main className="page">
       {/* HEADER */}
       <div className="header">
-        <h1>Summoners War Shop</h1>
-        <p>Starter • LD • Reroll Accounts</p>
+        <div className="header-content">
+          <div className="logo">
+            <span className="logo-icon">⚔️</span>
+            <div>
+              <h1>Summoners War Shop</h1>
+              <p>Starter • LD • Reroll Accounts</p>
+            </div>
+          </div>
+          <a className="zalo-btn" href="https://zalo.me/0948258616">
+            <span>💬</span> Liên hệ Zalo
+          </a>
+        </div>
+      </div>
 
-        <a className="btn" href="https://zalo.me/0948258616">
-          Liên hệ Zalo
-        </a>
+      {/* TOOLBAR */}
+      <div className="toolbar">
+        <div className="toolbar-content">
+          <div className="search-box">
+            <span>🔍</span>
+            <input
+              type="text"
+              placeholder="Tìm account..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+            {searchTerm && (
+              <button onClick={() => setSearchTerm("")}>✕</button>
+            )}
+          </div>
+          
+          <div className="sort-box">
+            <select value={sortBy} onChange={(e) => setSortBy(e.target.value)}>
+              <option value="newest">Mới nhất</option>
+              <option value="oldest">Acc cũ nhất</option>
+              <option value="cheapest">Rẻ nhất</option>
+              <option value="expensive">Đắt nhất</option>
+            </select>
+          </div>
+          
+          <div className="count">
+            {filteredAccounts.length} account
+          </div>
+        </div>
       </div>
 
       {/* GRID */}
       <div className="grid">
-        {accounts.map((acc) => (
+        {filteredAccounts.map((acc) => (
           <div className="card" key={acc.id}>
-            {acc.image_url && (
-              <img
-                src={acc.image_url}
-                className="img"
-                onClick={() => setPreview(acc.image_url)}
-              />
-            )}
+            {/* Image */}
+            <div className="img-wrapper" onClick={() => setPreview(acc.image_url)}>
+              {acc.image_url ? (
+                <img src={acc.image_url} alt={acc.monster_name} />
+              ) : (
+                <div className="no-img">No Image</div>
+              )}
+              <div className="img-badge">🔍 Xem ảnh</div>
+            </div>
 
-            <div className="content">
-              <h2>{acc.monster_name}</h2>
-
-              <span className="price">
+            {/* Content */}
+            <div className="card-body">
+              <h3>{acc.monster_name}</h3>
+              
+              <div className="price">
                 {Number(acc.price).toLocaleString("vi-VN")}₫
-              </span>
+              </div>
 
-              <p className="desc">{acc.description}</p>
+              {acc.description && (
+                <p className="desc">{acc.description}</p>
+              )}
 
-              <p className="account-age">
-                Tuổi account: {getAccountAge(acc.account_created_date)} ngày
-              </p>
+              <div className="meta">
+                {acc.account_created_date && (
+                  <span className="age">
+                    ⏰ Đã tạo được: {getAccountAge(acc.account_created_date)} ngày
+                  </span>
+                )}
+                <span className="date">
+                  📅 {acc.created_at
+                    ? new Date(acc.created_at).toLocaleDateString("vi-VN")
+                    : ""}
+                </span>
+              </div>
 
-              <small className="time">
-                {acc.created_at
-                  ? new Date(acc.created_at).toLocaleString("vi-VN")
-                  : ""}
-              </small>
-
-              <a className="buy" href="https://zalo.me/0948258616">
+              <a className="buy-btn" href="https://zalo.me/0948258616">
                 Mua ngay
               </a>
             </div>
@@ -82,160 +140,348 @@ export default function Home() {
         ))}
       </div>
 
-      {/* IMAGE PREVIEW */}
-      {preview && (
-        <div className="modal" onClick={() => setPreview(null)}>
-          <img src={preview} />
+      {/* Empty */}
+      {filteredAccounts.length === 0 && (
+        <div className="empty">
+          <p>Không tìm thấy account nào</p>
         </div>
       )}
 
-      {/* STYLE */}
+      {/* Footer */}
+      <div className="footer">
+        <p>Uy tín - Chất lượng - Hỗ trợ 24/7</p>
+        <a href="https://zalo.me/0948258616">Liên hệ qua Zalo</a>
+      </div>
+
+      {/* MODAL */}
+      {preview && (
+        <div className="modal" onClick={() => setPreview(null)}>
+          <button className="modal-close" onClick={() => setPreview(null)}>✕</button>
+          <img src={preview} alt="Preview" />
+        </div>
+      )}
+
       <style jsx>{`
         .page {
-          background: #0e0e0e;
-          color: white;
+          background: #0d1117;
+          color: #c9d1d9;
           min-height: 100vh;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
         }
 
+        /* HEADER */
         .header {
-          text-align: center;
-          padding: 40px 16px 32px;
-          background: linear-gradient(180deg, #1a1a1a 0%, #0e0e0e 100%);
-          border-bottom: 1px solid #222;
+          background: #161b22;
+          border-bottom: 1px solid #21262d;
+          padding: 0;
+          position: sticky;
+          top: 0;
+          z-index: 100;
         }
 
-        .header h1 {
-          font-size: 28px;
-          margin: 0;
-          color: #f2c078;
-          font-weight: 700;
-          letter-spacing: -0.5px;
-        }
-
-        .header p {
-          color: #999;
-          font-size: 14px;
-          margin: 8px 0 16px;
-        }
-
-        .btn {
-          display: inline-block;
-          padding: 12px 24px;
-          background: #f2c078;
-          color: #111;
-          border-radius: 8px;
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: 600;
-          transition: background 0.2s;
-        }
-
-        .btn:hover {
-          background: #e0b060;
-        }
-
-        .grid {
-          display: grid;
-          grid-template-columns: 1fr;
-          gap: 16px;
-          padding: 20px 16px;
-          max-width: 1100px;
+        .header-content {
+          max-width: 1200px;
           margin: 0 auto;
+          padding: 16px 20px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
         }
 
-        @media (min-width: 768px) {
-          .grid {
-            grid-template-columns: repeat(2, 1fr);
-            padding: 24px 20px;
-          }
+        .logo {
+          display: flex;
+          align-items: center;
+          gap: 12px;
         }
 
-        @media (min-width: 1100px) {
-          .grid {
-            grid-template-columns: repeat(3, 1fr);
-          }
+        .logo-icon {
+          font-size: 28px;
         }
 
-        .card {
-          background: #1a1a1a;
-          border-radius: 12px;
-          overflow: hidden;
-          border: 1px solid #2a2a2a;
-          transition: border-color 0.2s;
+        .logo h1 {
+          font-size: 18px;
+          margin: 0;
+          color: #f0c060;
+          font-weight: 600;
         }
 
-        .card:hover {
-          border-color: #3a3a3a;
+        .logo p {
+          font-size: 12px;
+          color: #8b949e;
+          margin: 2px 0 0;
         }
 
-        .img {
+        .zalo-btn {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          padding: 10px 18px;
+          background: #238636;
+          color: #fff;
+          border-radius: 6px;
+          text-decoration: none;
+          font-size: 13px;
+          font-weight: 600;
+          transition: background 0.15s;
+          white-space: nowrap;
+        }
+
+        .zalo-btn:hover {
+          background: #2ea043;
+        }
+
+        /* TOOLBAR */
+        .toolbar {
+          background: #161b22;
+          border-bottom: 1px solid #21262d;
+          padding: 12px 0;
+        }
+
+        .toolbar-content {
+          max-width: 1200px;
+          margin: 0 auto;
+          padding: 0 20px;
+          display: flex;
+          gap: 12px;
+          align-items: center;
+        }
+
+        .search-box {
+          flex: 1;
+          position: relative;
+        }
+
+        .search-box span {
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          font-size: 14px;
+        }
+
+        .search-box input {
           width: 100%;
-          height: 240px;
-          object-fit: contain;
-          background: #111;
-          cursor: pointer;
-          padding: 8px;
+          padding: 8px 35px 8px 34px;
+          background: #0d1117;
+          border: 1px solid #30363d;
+          border-radius: 6px;
+          color: #c9d1d9;
+          font-size: 13px;
+          outline: none;
           box-sizing: border-box;
         }
 
-        .content {
-          padding: 16px;
+        .search-box input:focus {
+          border-color: #f0c060;
         }
 
-        h2 {
-          margin: 0 0 10px;
-          font-size: 19px;
+        .search-box button {
+          position: absolute;
+          right: 8px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: none;
+          border: none;
+          color: #8b949e;
+          cursor: pointer;
+          font-size: 14px;
+          padding: 2px 6px;
+        }
+
+        .sort-box select {
+          padding: 8px 12px;
+          background: #0d1117;
+          border: 1px solid #30363d;
+          border-radius: 6px;
+          color: #c9d1d9;
+          font-size: 13px;
+          outline: none;
+          cursor: pointer;
+        }
+
+        .count {
+          font-size: 13px;
+          color: #8b949e;
+          white-space: nowrap;
+        }
+
+        /* GRID */
+        .grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 16px;
+          padding: 20px;
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        @media (max-width: 640px) {
+          .grid {
+            grid-template-columns: 1fr;
+            gap: 12px;
+            padding: 12px;
+          }
+          
+          .toolbar-content {
+            flex-wrap: wrap;
+          }
+          
+          .header-content {
+            padding: 12px 16px;
+          }
+          
+          .logo h1 {
+            font-size: 16px;
+          }
+        }
+
+        /* CARD */
+        .card {
+          background: #161b22;
+          border: 1px solid #21262d;
+          border-radius: 8px;
+          overflow: hidden;
+          transition: border-color 0.15s;
+        }
+
+        .card:hover {
+          border-color: #30363d;
+        }
+
+        .img-wrapper {
+          position: relative;
+          width: 100%;
+          height: 220px;
+          background: #0d1117;
+          cursor: pointer;
+          overflow: hidden;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .img-wrapper img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          padding: 12px;
+          box-sizing: border-box;
+        }
+
+        .no-img {
+          color: #484f58;
+          font-size: 14px;
+        }
+
+        .img-badge {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          padding: 8px;
+          background: rgba(0, 0, 0, 0.75);
+          color: #c9d1d9;
+          font-size: 12px;
+          text-align: center;
+          opacity: 0;
+          transition: opacity 0.15s;
+        }
+
+        .img-wrapper:hover .img-badge {
+          opacity: 1;
+        }
+
+        .card-body {
+          padding: 14px;
+        }
+
+        .card-body h3 {
+          margin: 0 0 8px;
+          font-size: 16px;
           font-weight: 600;
-          color: #f2c078;
+          color: #f0c060;
+          line-height: 1.3;
         }
 
         .price {
-          display: inline-block;
           font-size: 18px;
-          color: #4ade80;
           font-weight: 700;
+          color: #3fb950;
           margin-bottom: 10px;
         }
 
         .desc {
           font-size: 13px;
-          color: #aaa;
+          color: #8b949e;
           margin: 0 0 12px;
           line-height: 1.5;
-          min-height: 36px;
         }
 
-        .account-age {
-          font-size: 14px;
-          color: #f2c078;
-          font-weight: 500;
-          margin: 0 0 8px;
-        }
-
-        .time {
-          display: block;
-          font-size: 12px;
-          color: #666;
+        .meta {
+          display: flex;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 6px;
           margin-bottom: 12px;
         }
 
-        .buy {
+        .age {
+          font-size: 12px;
+          color: #f0c060;
+        }
+
+        .date {
+          font-size: 12px;
+          color: #484f58;
+        }
+
+        .buy-btn {
           display: block;
+          width: 100%;
+          padding: 10px;
+          background: #238636;
+          color: #fff;
           text-align: center;
-          padding: 11px;
-          background: #f2c078;
-          border-radius: 8px;
-          color: #111;
+          border-radius: 6px;
           text-decoration: none;
           font-size: 14px;
           font-weight: 600;
-          transition: background 0.2s;
+          transition: background 0.15s;
+          box-sizing: border-box;
         }
 
-        .buy:hover {
-          background: #e0b060;
+        .buy-btn:hover {
+          background: #2ea043;
         }
 
+        /* EMPTY */
+        .empty {
+          text-align: center;
+          padding: 40px;
+          color: #484f58;
+        }
+
+        /* FOOTER */
+        .footer {
+          text-align: center;
+          padding: 32px 16px;
+          border-top: 1px solid #21262d;
+          margin-top: 40px;
+        }
+
+        .footer p {
+          color: #8b949e;
+          font-size: 13px;
+          margin: 0 0 8px;
+        }
+
+        .footer a {
+          color: #f0c060;
+          font-size: 13px;
+          text-decoration: none;
+        }
+
+        /* MODAL */
         .modal {
           position: fixed;
           inset: 0;
@@ -244,12 +490,34 @@ export default function Home() {
           justify-content: center;
           align-items: center;
           z-index: 999;
+          padding: 20px;
         }
 
         .modal img {
-          max-width: 92%;
-          max-height: 92%;
-          border-radius: 10px;
+          max-width: 100%;
+          max-height: 85vh;
+          border-radius: 4px;
+        }
+
+        .modal-close {
+          position: absolute;
+          top: 16px;
+          right: 20px;
+          background: #21262d;
+          border: 1px solid #30363d;
+          color: #c9d1d9;
+          width: 36px;
+          height: 36px;
+          border-radius: 6px;
+          font-size: 16px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+
+        .modal-close:hover {
+          background: #30363d;
         }
       `}</style>
     </main>
