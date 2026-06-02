@@ -118,7 +118,7 @@ export default function Home() {
               {/* Account Code */}
               {acc.account_code && (
                 <div className="account-code">
-                  🔑 {acc.account_code}
+                  Mã số: {acc.account_code}
                 </div>
               )}
 
@@ -135,7 +135,7 @@ export default function Home() {
                 {acc.ancient_transcendence_scroll !== null && acc.ancient_transcendence_scroll !== undefined && (
                   <div className="detail-item">
                     <span className="detail-icon">📜</span>
-                    <span className="detail-label">Ancient Transcendence:</span>
+                    <span className="detail-label">Sách 12 năm:</span>
                     <span className="detail-value">{acc.ancient_transcendence_scroll}</span>
                   </div>
                 )}
@@ -143,7 +143,7 @@ export default function Home() {
                 {acc.ld_scroll !== null && acc.ld_scroll !== undefined && (
                   <div className="detail-item">
                     <span className="detail-icon">✨</span>
-                    <span className="detail-label">LD Scroll:</span>
+                    <span className="detail-label">Sách LnD:</span>
                     <span className="detail-value">{acc.ld_scroll}</span>
                   </div>
                 )}
