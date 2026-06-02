@@ -19,6 +19,7 @@ export default function Admin() {
 
   const [accounts, setAccounts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   async function load() {
     setLoading(true);
@@ -41,6 +42,35 @@ export default function Admin() {
     } else {
       alert("Sai mật khẩu");
     }
+  }
+
+  function resetForm() {
+    setMonsterName("");
+    setPrice("");
+    setDescription("");
+    setAccountDate("");
+    setWindPhoenix("Có");
+    setAncientScroll("88");
+    setLdScroll("1");
+    setAccountCode("");
+    setImageFile(null);
+    setEditingId(null);
+  }
+
+  function editAccount(acc: any) {
+    setEditingId(acc.id);
+    setMonsterName(acc.monster_name || "");
+    setPrice(acc.price?.toString() || "");
+    setDescription(acc.description || "");
+    setAccountDate(acc.account_created_date || "");
+    setWindPhoenix(acc.wind_phoenix || "Có");
+    setAncientScroll(acc.ancient_transcendence_scroll?.toString() || "88");
+    setLdScroll(acc.ld_scroll?.toString() || "1");
+    setAccountCode(acc.account_code || "");
+    setImageFile(null);
+    
+    // Scroll lên form
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
   async function add() {
@@ -67,32 +97,43 @@ export default function Admin() {
       url = data.publicUrl;
     }
 
-    await supabase.from("accounts").insert([
-      {
+    if (editingId) {
+      // Update existing account
+      const updateData: any = {
         monster_name: monsterName,
         price: Number(price),
         description,
-        image_url: url,
-        created_at: new Date().toISOString(),
         account_created_date: accountDate,
         wind_phoenix: windPhoenix,
         ancient_transcendence_scroll: ancientScroll ? Number(ancientScroll) : null,
         ld_scroll: ldScroll ? Number(ldScroll) : null,
         account_code: accountCode,
-      },
-    ]);
+      };
 
-    // Reset form - giữ nguyên ngày tạo account
-    setMonsterName("");
-    setPrice("");
-    setDescription("");
-    // Không reset accountDate
-    setWindPhoenix("Có");
-    setAncientScroll("88");
-    setLdScroll("1");
-    setAccountCode("");
-    setImageFile(null);
+      if (url) {
+        updateData.image_url = url;
+      }
 
+      await supabase.from("accounts").update(updateData).eq("id", editingId);
+    } else {
+      // Insert new account
+      await supabase.from("accounts").insert([
+        {
+          monster_name: monsterName,
+          price: Number(price),
+          description,
+          image_url: url,
+          created_at: new Date().toISOString(),
+          account_created_date: accountDate,
+          wind_phoenix: windPhoenix,
+          ancient_transcendence_scroll: ancientScroll ? Number(ancientScroll) : null,
+          ld_scroll: ldScroll ? Number(ldScroll) : null,
+          account_code: accountCode,
+        },
+      ]);
+    }
+
+    resetForm();
     load();
   }
 
@@ -151,9 +192,11 @@ export default function Admin() {
         </div>
       </div>
 
-      {/* Add Form */}
+      {/* Add/Edit Form */}
       <div style={styles.formCard}>
-        <h3 style={styles.formTitle}>➕ Thêm Account Mới</h3>
+        <h3 style={styles.formTitle}>
+          {editingId ? "✏️ Sửa Account" : "➕ Thêm Account Mới"}
+        </h3>
         
         <div style={styles.formGrid}>
           <div style={styles.formGroup}>
@@ -188,7 +231,7 @@ export default function Admin() {
           </div>
           
           <div style={styles.formGroup}>
-            <label style={styles.label}>Hình Ảnh</label>
+            <label style={styles.label}>Hình Ảnh {editingId && "(để trống nếu không đổi)"}</label>
             <input 
               type="file"
               onChange={(e) => {
@@ -258,9 +301,17 @@ export default function Admin() {
           />
         </div>
         
-        <button onClick={add} style={styles.addButton}>
-          ✨ Thêm Account
-        </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button onClick={add} style={styles.addButton}>
+            {editingId ? "💾 Cập Nhật Account" : "✨ Thêm Account"}
+          </button>
+          
+          {editingId && (
+            <button onClick={resetForm} style={styles.cancelButton}>
+              Hủy
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Accounts List */}
@@ -274,7 +325,10 @@ export default function Admin() {
         ) : (
           <div style={styles.accountGrid}>
             {accounts.map((a) => (
-              <div key={a.id} style={styles.accountCard}>
+              <div key={a.id} style={{
+                ...styles.accountCard,
+                border: editingId === a.id ? "2px solid #f2c078" : "1px solid rgba(255, 255, 255, 0.1)"
+              }}>
                 {a.image_url && (
                   <img 
                     src={a.image_url} 
@@ -326,7 +380,6 @@ export default function Admin() {
                     <p style={styles.description}>{a.description}</p>
                   )}
                   
-                  {/* Chỉ hiển thị ngày tạo account, ẩn ngày đăng */}
                   <div style={styles.meta}>
                     {a.account_created_date && (
                       <span style={styles.dateText}>
@@ -335,12 +388,20 @@ export default function Admin() {
                     )}
                   </div>
                   
-                  <button 
-                    onClick={() => del(a.id)} 
-                    style={styles.deleteButton}
-                  >
-                    🗑️ Xóa
-                  </button>
+                  <div style={{ display: "flex", gap: "8px" }}>
+                    <button 
+                      onClick={() => editAccount(a)} 
+                      style={styles.editButton}
+                    >
+                      ✏️ Sửa
+                    </button>
+                    <button 
+                      onClick={() => del(a.id)} 
+                      style={styles.deleteButton}
+                    >
+                      🗑️ Xóa
+                    </button>
+                  </div>
                 </div>
               </div>
             ))}
@@ -545,6 +606,17 @@ const styles: Record<string, React.CSSProperties> = {
     transition: "all 0.3s",
     boxShadow: "0 4px 15px rgba(242, 192, 120, 0.3)",
   },
+  cancelButton: {
+    padding: "12px 30px",
+    background: "rgba(255, 255, 255, 0.1)",
+    color: "#fff",
+    border: "1px solid rgba(255, 255, 255, 0.2)",
+    borderRadius: "10px",
+    fontSize: "16px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    transition: "all 0.3s",
+  },
   
   // List
   listCard: {
@@ -623,8 +695,20 @@ const styles: Record<string, React.CSSProperties> = {
     color: "rgba(255, 255, 255, 0.5)",
     fontSize: "12px",
   },
+  editButton: {
+    flex: 1,
+    padding: "8px",
+    background: "rgba(242, 192, 120, 0.2)",
+    color: "#f2c078",
+    border: "1px solid rgba(242, 192, 120, 0.3)",
+    borderRadius: "8px",
+    cursor: "pointer",
+    fontSize: "14px",
+    fontWeight: "500",
+    transition: "all 0.3s",
+  },
   deleteButton: {
-    width: "100%",
+    flex: 1,
     padding: "8px",
     background: "rgba(239, 68, 68, 0.2)",
     color: "#ef4444",
