@@ -17,7 +17,6 @@ function getAccountAge(date: string) {
 export default function Home() {
   const [accounts, setAccounts] = useState<any[]>([]);
   const [preview, setPreview] = useState<string | null>(null);
-  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -32,63 +31,50 @@ export default function Home() {
     load();
   }, []);
 
-  const filteredAccounts = accounts.filter(acc => {
-    const matchesSearch = acc.monster_name
-      ?.toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    return matchesSearch;
-  });
-
   return (
     <main className="page">
       {/* HEADER */}
       <div className="header">
         <h1>Summoners War Shop</h1>
         <p>Starter • LD • Reroll Accounts</p>
-        <a className="zalo-btn" href="https://zalo.me/0948258616">
+
+        <a className="btn" href="https://zalo.me/0948258616">
           Liên hệ Zalo
         </a>
       </div>
 
-      {/* SEARCH */}
-      <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Tìm account..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      {/* LIST */}
-      <div className="account-list">
-        {filteredAccounts.map((acc) => (
-          <div className="account-card" key={acc.id}>
-            {acc.image_url ? (
+      {/* GRID */}
+      <div className="grid">
+        {accounts.map((acc) => (
+          <div className="card" key={acc.id}>
+            {acc.image_url && (
               <img
                 src={acc.image_url}
+                className="img"
                 onClick={() => setPreview(acc.image_url)}
-                alt={acc.monster_name}
               />
-            ) : (
-              <div className="no-img">No Image</div>
             )}
 
-            <div className="info">
+            <div className="content">
               <h2>{acc.monster_name}</h2>
+
               <span className="price">
                 {Number(acc.price).toLocaleString("vi-VN")}₫
               </span>
 
-              {acc.description && <p>{acc.description}</p>}
+              <p className="desc">{acc.description}</p>
 
-              {acc.account_created_date && (
-                <span className="age">
-                  Tuổi acc: {getAccountAge(acc.account_created_date)} ngày
-                </span>
-              )}
+              <p className="account-age">
+                Tuổi account: {getAccountAge(acc.account_created_date)} ngày
+              </p>
 
-              <a className="buy-btn" href="https://zalo.me/0948258616">
+              <small className="time">
+                {acc.created_at
+                  ? new Date(acc.created_at).toLocaleString("vi-VN")
+                  : ""}
+              </small>
+
+              <a className="buy" href="https://zalo.me/0948258616">
                 Mua ngay
               </a>
             </div>
@@ -96,194 +82,174 @@ export default function Home() {
         ))}
       </div>
 
-      {/* PREVIEW */}
+      {/* IMAGE PREVIEW */}
       {preview && (
-        <div className="preview" onClick={() => setPreview(null)}>
-          <span className="close" onClick={() => setPreview(null)}>✕</span>
-          <img src={preview} alt="Preview" />
+        <div className="modal" onClick={() => setPreview(null)}>
+          <img src={preview} />
         </div>
       )}
 
+      {/* STYLE */}
       <style jsx>{`
         .page {
           background: #0e0e0e;
-          color: #e0e0e0;
+          color: white;
           min-height: 100vh;
-          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         .header {
           text-align: center;
-          padding: 32px 16px 24px;
-          background: #111;
+          padding: 40px 16px 32px;
+          background: linear-gradient(180deg, #1a1a1a 0%, #0e0e0e 100%);
           border-bottom: 1px solid #222;
         }
 
         .header h1 {
-          font-size: 24px;
+          font-size: 28px;
           margin: 0;
           color: #f2c078;
-          font-weight: 600;
+          font-weight: 700;
+          letter-spacing: -0.5px;
         }
 
         .header p {
-          color: #888;
-          font-size: 13px;
-          margin: 6px 0 12px;
+          color: #999;
+          font-size: 14px;
+          margin: 8px 0 16px;
         }
 
-        .zalo-btn {
+        .btn {
           display: inline-block;
-          padding: 10px 18px;
+          padding: 12px 24px;
           background: #f2c078;
           color: #111;
           border-radius: 8px;
           text-decoration: none;
-          font-size: 13px;
-          font-weight: 600;
-        }
-
-        .search-bar {
-          padding: 12px 16px;
-          max-width: 600px;
-          margin: 0 auto;
-        }
-
-        .search-bar input {
-          width: 100%;
-          padding: 10px 14px;
-          background: #1a1a1a;
-          border: 1px solid #333;
-          border-radius: 8px;
-          color: #e0e0e0;
           font-size: 14px;
-          outline: none;
-          box-sizing: border-box;
+          font-weight: 600;
+          transition: background 0.2s;
         }
 
-        .search-bar input:focus {
-          border-color: #f2c078;
+        .btn:hover {
+          background: #e0b060;
         }
 
-        .account-list {
+        .grid {
           display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          grid-template-columns: 1fr;
           gap: 16px;
-          padding: 16px;
+          padding: 20px 16px;
           max-width: 1100px;
           margin: 0 auto;
         }
 
-        @media (max-width: 640px) {
-          .account-list {
-            grid-template-columns: 1fr;
+        @media (min-width: 768px) {
+          .grid {
+            grid-template-columns: repeat(2, 1fr);
+            padding: 24px 20px;
           }
         }
 
-        .account-card {
-          background: #171717;
-          border-radius: 12px;
-          overflow: hidden;
-          border: 1px solid #262626;
+        @media (min-width: 1100px) {
+          .grid {
+            grid-template-columns: repeat(3, 1fr);
+          }
         }
 
-        .account-card img {
-          width: 100%;
-          height: 260px;
-          object-fit: contain;
+        .card {
           background: #1a1a1a;
+          border-radius: 12px;
+          overflow: hidden;
+          border: 1px solid #2a2a2a;
+          transition: border-color 0.2s;
+        }
+
+        .card:hover {
+          border-color: #3a3a3a;
+        }
+
+        .img {
+          width: 100%;
+          height: 240px;
+          object-fit: contain;
+          background: #111;
           cursor: pointer;
           padding: 8px;
           box-sizing: border-box;
         }
 
-        .no-img {
-          width: 100%;
-          height: 260px;
-          background: #1a1a1a;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #555;
-          font-size: 14px;
+        .content {
+          padding: 16px;
         }
 
-        .info {
-          padding: 14px;
-        }
-
-        .info h2 {
-          margin: 0 0 8px;
-          font-size: 18px;
+        h2 {
+          margin: 0 0 10px;
+          font-size: 19px;
           font-weight: 600;
           color: #f2c078;
         }
 
         .price {
           display: inline-block;
-          font-size: 17px;
-          font-weight: 700;
+          font-size: 18px;
           color: #4ade80;
-          margin-bottom: 8px;
-        }
-
-        .info p {
-          color: #999;
-          font-size: 13px;
-          margin: 0 0 10px;
-          line-height: 1.5;
-        }
-
-        .age {
-          display: block;
-          font-size: 13px;
-          color: #f2c078;
-          font-weight: 500;
+          font-weight: 700;
           margin-bottom: 10px;
         }
 
-        .buy-btn {
+        .desc {
+          font-size: 13px;
+          color: #aaa;
+          margin: 0 0 12px;
+          line-height: 1.5;
+          min-height: 36px;
+        }
+
+        .account-age {
+          font-size: 14px;
+          color: #f2c078;
+          font-weight: 500;
+          margin: 0 0 8px;
+        }
+
+        .time {
+          display: block;
+          font-size: 12px;
+          color: #666;
+          margin-bottom: 12px;
+        }
+
+        .buy {
           display: block;
           text-align: center;
-          padding: 10px;
+          padding: 11px;
           background: #f2c078;
-          color: #111;
           border-radius: 8px;
+          color: #111;
           text-decoration: none;
           font-size: 14px;
           font-weight: 600;
+          transition: background 0.2s;
         }
 
-        .preview {
+        .buy:hover {
+          background: #e0b060;
+        }
+
+        .modal {
           position: fixed;
           inset: 0;
-          background: rgba(0, 0, 0, 0.92);
+          background: rgba(0, 0, 0, 0.9);
           display: flex;
           justify-content: center;
           align-items: center;
           z-index: 999;
         }
 
-        .preview img {
+        .modal img {
           max-width: 92%;
           max-height: 92%;
-          border-radius: 8px;
-        }
-
-        .close {
-          position: absolute;
-          top: 20px;
-          right: 24px;
-          color: #fff;
-          font-size: 24px;
-          cursor: pointer;
-          background: rgba(255,255,255,0.15);
-          width: 36px;
-          height: 36px;
-          border-radius: 50%;
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          border-radius: 10px;
         }
       `}</style>
     </main>
