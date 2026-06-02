@@ -14,6 +14,7 @@ export default function Admin() {
   const [windPhoenix, setWindPhoenix] = useState("");
   const [ancientScroll, setAncientScroll] = useState("");
   const [ldScroll, setLdScroll] = useState("");
+  const [accountCode, setAccountCode] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
 
   const [accounts, setAccounts] = useState<any[]>([]);
@@ -77,6 +78,7 @@ export default function Admin() {
         wind_phoenix: windPhoenix,
         ancient_transcendence_scroll: ancientScroll ? Number(ancientScroll) : null,
         ld_scroll: ldScroll ? Number(ldScroll) : null,
+        account_code: accountCode,
       },
     ]);
 
@@ -87,6 +89,7 @@ export default function Admin() {
     setWindPhoenix("");
     setAncientScroll("");
     setLdScroll("");
+    setAccountCode("");
     setImageFile(null);
 
     load();
@@ -198,8 +201,18 @@ export default function Admin() {
           </div>
         </div>
 
-        {/* New Fields */}
+        {/* Account Details Fields */}
         <div style={styles.formGrid}>
+          <div style={styles.formGroup}>
+            <label style={styles.label}>🔑 Mã Account</label>
+            <input 
+              placeholder="VD: ACC001"
+              value={accountCode}
+              onChange={(e) => setAccountCode(e.target.value)}
+              style={styles.input}
+            />
+          </div>
+
           <div style={styles.formGroup}>
             <label style={styles.label}>🦅 Wind Phoenix</label>
             <input 
@@ -274,6 +287,21 @@ export default function Admin() {
                     {a.price?.toLocaleString("vi-VN")} VND
                   </div>
                   
+                  {/* Account Code */}
+                  {a.account_code && (
+                    <div style={{
+                      background: "rgba(242, 192, 120, 0.2)",
+                      padding: "6px 10px",
+                      borderRadius: "6px",
+                      marginBottom: "10px",
+                      fontSize: "13px",
+                      color: "#f2c078",
+                      fontFamily: "monospace",
+                    }}>
+                      🔑 {a.account_code}
+                    </div>
+                  )}
+
                   {/* Account Details */}
                   <div style={styles.accountDetails}>
                     {a.wind_phoenix && (
@@ -283,12 +311,12 @@ export default function Admin() {
                     )}
                     {a.ancient_transcendence_scroll !== null && a.ancient_transcendence_scroll !== undefined && (
                       <div style={styles.detailRow}>
-                        📜 Ancient Scroll: {a.ancient_transcendence_scroll}x
+                        📜 Ancient Scroll: {a.ancient_transcendence_scroll}
                       </div>
                     )}
                     {a.ld_scroll !== null && a.ld_scroll !== undefined && (
                       <div style={styles.detailRow}>
-                        ✨ LD Scroll: {a.ld_scroll}x
+                        ✨ LD Scroll: {a.ld_scroll}
                       </div>
                     )}
                   </div>
