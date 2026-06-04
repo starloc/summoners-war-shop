@@ -46,15 +46,11 @@ export default function Admin() {
 
   function resetForm() {
     setMonsterName("");
-    setPrice("");
     setDescription("");
-    setAccountDate("");
-    setWindPhoenix("Có");
-    setAncientScroll("88");
-    setLdScroll("1");
     setAccountCode("");
     setImageFile(null);
     setEditingId(null);
+    // Giữ nguyên: price, accountDate, windPhoenix, ancientScroll, ldScroll
   }
 
   function editAccount(acc: any) {
@@ -97,7 +93,6 @@ export default function Admin() {
     }
 
     if (editingId) {
-      // Update existing account
       const updateData: any = {
         monster_name: monsterName,
         price: Number(price),
@@ -113,22 +108,18 @@ export default function Admin() {
         updateData.image_url = url;
       }
 
-      console.log("Updating account:", editingId, updateData);
-
       const { error } = await supabase
         .from("accounts")
         .update(updateData)
         .eq("id", editingId);
 
       if (error) {
-        console.error("Update error:", error);
         alert("Lỗi cập nhật: " + error.message);
         return;
       }
       
-      console.log("Update successful");
+      alert("Đã cập nhật thành công!");
     } else {
-      // Insert new account
       const { error } = await supabase.from("accounts").insert([
         {
           monster_name: monsterName,
@@ -145,7 +136,6 @@ export default function Admin() {
       ]);
 
       if (error) {
-        console.error("Insert error:", error);
         alert("Lỗi thêm: " + error.message);
         return;
       }
