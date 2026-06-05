@@ -9,7 +9,6 @@ function getAccountAge(date: string) {
   const created = new Date(date);
   const today = new Date();
   
-  // Reset giờ phút giây về 0 để chỉ so sánh ngày (theo giờ địa phương GMT+7)
   const createdDate = new Date(created.getFullYear(), created.getMonth(), created.getDate());
   const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
 
@@ -24,6 +23,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("newest");
   const [, forceUpdate] = useState(0);
+  const [showWelcome, setShowWelcome] = useState(false);
 
   useEffect(() => {
     async function load() {
@@ -36,6 +36,13 @@ export default function Home() {
     }
 
     load();
+    
+    // Hiện popup sau khi load xong
+    const timer = setTimeout(() => {
+      setShowWelcome(true);
+    }, 500);
+    
+    return () => clearTimeout(timer);
   }, []);
 
   // Tự động cập nhật mỗi phút
@@ -60,6 +67,23 @@ export default function Home() {
 
   return (
     <main className="page">
+      {/* WELCOME POPUP */}
+      {showWelcome && (
+        <div className="popup-overlay" onClick={() => setShowWelcome(false)}>
+          <div className="popup" onClick={(e) => e.stopPropagation()}>
+            <div className="popup-icon">⚔️</div>
+            <h2 className="popup-title">Chào mừng đến với Summoners War Shop!</h2>
+            <div className="popup-divider"></div>
+            <p className="popup-text">
+              ⚠️ <strong>Lưu ý:</strong> các tài khoản đều được set ID sẵn (ID không dính tên riêng), tài nguyên acc còn đủ
+            </p>
+            <button className="popup-btn" onClick={() => setShowWelcome(false)}>
+              Đã hiểu
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* HEADER */}
       <div className="header">
         <div className="header-content">
@@ -67,11 +91,11 @@ export default function Home() {
             <span className="logo-icon">⚔️</span>
             <div>
               <h1>Summoners War Shop</h1>
-              <p>Clone sự kiện 12 năm, còn đủ tài nguyên các map</p>
+              <p>Clone sự kiện 12 năm</p>
             </div>
           </div>
           <a className="zalo-btn" href="https://zalo.me/0948258616">
-            <span></span> Liên hệ Zalo
+            <span>💬</span> Liên hệ Zalo
           </a>
         </div>
       </div>
@@ -111,7 +135,6 @@ export default function Home() {
       <div className="grid">
         {filteredAccounts.map((acc) => (
           <div className="card" key={acc.id}>
-            {/* Image */}
             <div className="img-wrapper" onClick={() => setPreview(acc.image_url)}>
               {acc.image_url ? (
                 <img src={acc.image_url} alt={acc.monster_name} />
@@ -121,7 +144,6 @@ export default function Home() {
               <div className="img-badge">🔍 Xem ảnh</div>
             </div>
 
-            {/* Content */}
             <div className="card-body">
               <h3>{acc.monster_name}</h3>
               
@@ -129,14 +151,12 @@ export default function Home() {
                 {Number(acc.price).toLocaleString("vi-VN")}₫
               </div>
 
-              {/* Account Code */}
               {acc.account_code && (
                 <div className="account-code">
                   Mã số: {acc.account_code}
                 </div>
               )}
 
-              {/* Account Details */}
               <div className="details">
                 {acc.wind_phoenix && (
                   <div className="detail-item">
@@ -170,7 +190,7 @@ export default function Home() {
               <div className="meta">
                 {acc.account_created_date && (
                   <span className="age">
-                    ⏰ Đã tạo được: {getAccountAge(acc.account_created_date)} ngày
+                    ⏰ Đã tạo: {getAccountAge(acc.account_created_date)} ngày
                   </span>
                 )}
                 <span className="date">
@@ -188,14 +208,12 @@ export default function Home() {
         ))}
       </div>
 
-      {/* Empty */}
       {filteredAccounts.length === 0 && (
         <div className="empty">
           <p>Không tìm thấy account nào</p>
         </div>
       )}
 
-      {/* Footer */}
       <div className="footer">
         <p>Uy tín - Chất lượng - Hỗ trợ 24/7</p>
         <a href="https://zalo.me/0948258616">Liên hệ qua Zalo</a>
@@ -217,6 +235,90 @@ export default function Home() {
           font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
         }
 
+        /* POPUP */
+        .popup-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.8);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          z-index: 1000;
+          padding: 20px;
+          animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+
+        .popup {
+          background: #161b22;
+          border: 1px solid #30363d;
+          border-radius: 16px;
+          padding: 32px 28px;
+          max-width: 420px;
+          width: 100%;
+          text-align: center;
+          animation: slideUp 0.3s;
+        }
+
+        @keyframes slideUp {
+          from { transform: translateY(30px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+
+        .popup-icon {
+          font-size: 48px;
+          margin-bottom: 16px;
+        }
+
+        .popup-title {
+          font-size: 20px;
+          color: #f0c060;
+          margin: 0 0 16px;
+          font-weight: 700;
+        }
+
+        .popup-divider {
+          width: 60px;
+          height: 2px;
+          background: #f0c060;
+          margin: 0 auto 16px;
+          border-radius: 1px;
+        }
+
+        .popup-text {
+          font-size: 14px;
+          color: #8b949e;
+          line-height: 1.6;
+          margin: 0 0 24px;
+          text-align: left;
+        }
+
+        .popup-text strong {
+          color: #f0c060;
+        }
+
+        .popup-btn {
+          width: 100%;
+          padding: 12px;
+          background: #f0c060;
+          color: #0d1117;
+          border: none;
+          border-radius: 8px;
+          font-size: 15px;
+          font-weight: 600;
+          cursor: pointer;
+          transition: background 0.2s;
+        }
+
+        .popup-btn:hover {
+          background: #e0b050;
+        }
+
+        /* HEADER */
         .header {
           background: #161b22;
           border-bottom: 1px solid #21262d;
