@@ -72,10 +72,10 @@ export default function Home() {
         <div className="popup-overlay" onClick={() => setShowWelcome(false)}>
           <div className="popup" onClick={(e) => e.stopPropagation()}>
             <div className="popup-icon">⚔️</div>
-            <h2 className="popup-title">Chào mừng đến với Summoners War Shop!</h2>
+            <h2 className="popup-title">Chào mừng đến với HL Shop!</h2>
             <div className="popup-divider"></div>
             <p className="popup-text">
-              ⚠️ <strong>Lưu ý:</strong> các tài khoản đều được set ID sẵn (ID không dính tên riêng), tài nguyên acc còn đủ
+              ⚠️ <strong>Lưu ý:</strong> các tài khoản đều được set ID sẵn (ID không dính tên riêng), tài nguyên acc còn đủ, 100% không bị ban
             </p>
             <button className="popup-btn" onClick={() => setShowWelcome(false)}>
               Đã hiểu
