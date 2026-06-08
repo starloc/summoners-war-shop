@@ -71,7 +71,7 @@ export default function Home() {
             <h2 className="popup-title">Chào mừng đến với HL Shop!</h2>
             <div className="popup-divider"></div>
             <p className="popup-text">
-              ⚠️ <strong>Lưu ý:</strong> các tài khoản đều được set ID sẵn (ID không dính tên riêng), tài nguyên acc còn đủ, 100% không bị ban
+              ⚠️ <strong>Lưu ý:</strong> Các tài khoản đều được set ID (không có tên riêng), tài nguyên event còn đủ, 100% không bị ban
             </p>
             <button className="popup-btn" onClick={() => setShowWelcome(false)}>
               Đã hiểu
@@ -91,7 +91,7 @@ export default function Home() {
             </div>
           </div>
           <a className="zalo-btn" href="https://zalo.me/0948258616">
-            <span>💬</span> Liên hệ Zalo
+            <span>Liên hệ Zalo</span>
           </a>
         </div>
       </div>
