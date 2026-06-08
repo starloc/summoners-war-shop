@@ -3,6 +3,18 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
+// Danh sách màu accent đẹp
+const accentColors = [
+  { name: "Vàng", primary: "#f0c060", secondary: "#e0b050", bg: "rgba(240, 192, 96, 0.1)", border: "rgba(240, 192, 96, 0.2)" },
+  { name: "Xanh dương", primary: "#58a6ff", secondary: "#4895e0", bg: "rgba(88, 166, 255, 0.1)", border: "rgba(88, 166, 255, 0.2)" },
+  { name: "Xanh lá", primary: "#3fb950", secondary: "#2ea043", bg: "rgba(63, 185, 80, 0.1)", border: "rgba(63, 185, 80, 0.2)" },
+  { name: "Tím", primary: "#bc8cff", secondary: "#a371f7", bg: "rgba(188, 140, 255, 0.1)", border: "rgba(188, 140, 255, 0.2)" },
+  { name: "Hồng", primary: "#f778ba", secondary: "#e060a0", bg: "rgba(247, 120, 186, 0.1)", border: "rgba(247, 120, 186, 0.2)" },
+  { name: "Cam", primary: "#f0883e", secondary: "#e07030", bg: "rgba(240, 136, 62, 0.1)", border: "rgba(240, 136, 62, 0.2)" },
+  { name: "Đỏ", primary: "#f85149", secondary: "#e04040", bg: "rgba(248, 81, 73, 0.1)", border: "rgba(248, 81, 73, 0.2)" },
+  { name: "Cyan", primary: "#39d2c0", secondary: "#30c0b0", bg: "rgba(57, 210, 192, 0.1)", border: "rgba(57, 210, 192, 0.2)" },
+];
+
 function formatAccountDate(date: string) {
   if (!date) return "";
   const d = new Date(date);
@@ -20,8 +32,13 @@ export default function Home() {
   const [sortBy, setSortBy] = useState("newest");
   const [, forceUpdate] = useState(0);
   const [showWelcome, setShowWelcome] = useState(false);
+  const [accentColor, setAccentColor] = useState(accentColors[0]);
 
   useEffect(() => {
+    // Random màu accent mỗi lần load trang
+    const randomColor = accentColors[Math.floor(Math.random() * accentColors.length)];
+    setAccentColor(randomColor);
+    
     async function load() {
       const { data } = await supabase
         .from("accounts")
@@ -71,7 +88,7 @@ export default function Home() {
             <h2 className="popup-title">Chào mừng đến với HL Shop!</h2>
             <div className="popup-divider"></div>
             <p className="popup-text">
-              ⚠️ <strong>Lưu ý:</strong> Các tài khoản đều được set ID (không có tên riêng), tài nguyên event còn đủ, 100% không bị ban
+              ⚠️ <strong>Lưu ý:</strong> Các tài khoản đều được set ID sẵn (Không có tên cá nhân), tài nguyên event còn đủ, cam kết 100% không bị ban.
             </p>
             <button className="popup-btn" onClick={() => setShowWelcome(false)}>
               Đã hiểu
@@ -267,7 +284,7 @@ export default function Home() {
 
         .popup-title {
           font-size: 20px;
-          color: #f0c060;
+          color: ${accentColor.primary};
           margin: 0 0 16px;
           font-weight: 700;
         }
@@ -275,7 +292,7 @@ export default function Home() {
         .popup-divider {
           width: 60px;
           height: 2px;
-          background: #f0c060;
+          background: ${accentColor.primary};
           margin: 0 auto 16px;
           border-radius: 1px;
         }
@@ -289,13 +306,13 @@ export default function Home() {
         }
 
         .popup-text strong {
-          color: #f0c060;
+          color: ${accentColor.primary};
         }
 
         .popup-btn {
           width: 100%;
           padding: 12px;
-          background: #f0c060;
+          background: ${accentColor.primary};
           color: #0d1117;
           border: none;
           border-radius: 8px;
@@ -306,7 +323,7 @@ export default function Home() {
         }
 
         .popup-btn:hover {
-          background: #e0b050;
+          background: ${accentColor.secondary};
         }
 
         /* HEADER */
@@ -341,7 +358,7 @@ export default function Home() {
         .logo h1 {
           font-size: 18px;
           margin: 0;
-          color: #f0c060;
+          color: ${accentColor.primary};
           font-weight: 600;
         }
 
@@ -411,7 +428,7 @@ export default function Home() {
         }
 
         .search-box input:focus {
-          border-color: #f0c060;
+          border-color: ${accentColor.primary};
         }
 
         .search-box button {
@@ -536,7 +553,7 @@ export default function Home() {
           margin: 0 0 8px;
           font-size: 16px;
           font-weight: 600;
-          color: #f0c060;
+          color: ${accentColor.primary};
           line-height: 1.3;
         }
 
@@ -548,12 +565,12 @@ export default function Home() {
         }
 
         .account-code {
-          background: rgba(240, 192, 96, 0.1);
-          border: 1px solid rgba(240, 192, 96, 0.2);
+          background: ${accentColor.bg};
+          border: 1px solid ${accentColor.border};
           padding: 6px 10px;
           border-radius: 4px;
           font-size: 13px;
-          color: #f0c060;
+          color: ${accentColor.primary};
           font-family: monospace;
           margin-bottom: 10px;
         }
@@ -613,7 +630,7 @@ export default function Home() {
 
         .age {
           font-size: 12px;
-          color: #f0c060;
+          color: ${accentColor.primary};
         }
 
         .buy-btn {
@@ -655,7 +672,7 @@ export default function Home() {
         }
 
         .footer a {
-          color: #f0c060;
+          color: ${accentColor.primary};
           font-size: 13px;
           text-decoration: none;
         }
