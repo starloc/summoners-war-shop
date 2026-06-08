@@ -3,18 +3,14 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
-function getAccountAge(date: string) {
-  if (!date) return 0;
-
-  const created = new Date(date);
-  const today = new Date();
-  
-  const createdDate = new Date(created.getFullYear(), created.getMonth(), created.getDate());
-  const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-
-  const diff = todayDate.getTime() - createdDate.getTime();
-
-  return Math.floor(diff / (1000 * 60 * 60 * 24));
+function formatAccountDate(date: string) {
+  if (!date) return "";
+  const d = new Date(date);
+  return d.toLocaleDateString("vi-VN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric"
+  });
 }
 
 export default function Home() {
@@ -61,7 +57,7 @@ export default function Home() {
     .sort((a, b) => {
       if (sortBy === "cheapest") return a.price - b.price;
       if (sortBy === "expensive") return b.price - a.price;
-      if (sortBy === "oldest") return getAccountAge(b.account_created_date) - getAccountAge(a.account_created_date);
+      if (sortBy === "oldest") return new Date(b.account_created_date).getTime() - new Date(a.account_created_date).getTime();
       return 0;
     });
 
@@ -190,14 +186,9 @@ export default function Home() {
               <div className="meta">
                 {acc.account_created_date && (
                   <span className="age">
-                    ⏰ Đã tạo: {getAccountAge(acc.account_created_date)} ngày
+                    ⏰ Ngày tạo: {formatAccountDate(acc.account_created_date)}
                   </span>
                 )}
-                <span className="date">
-                  📅 {acc.created_at
-                    ? new Date(acc.created_at).toLocaleDateString("vi-VN")
-                    : ""}
-                </span>
               </div>
 
               <a className="buy-btn" href="https://zalo.me/0948258616">
@@ -623,11 +614,6 @@ export default function Home() {
         .age {
           font-size: 12px;
           color: #f0c060;
-        }
-
-        .date {
-          font-size: 12px;
-          color: #484f58;
         }
 
         .buy-btn {
