@@ -88,7 +88,7 @@ export default function Home() {
             <h2 className="popup-title">Chào mừng đến với HL Shop!</h2>
             <div className="popup-divider"></div>
             <p className="popup-text">
-              ⚠️ <strong>Lưu ý:</strong> Các tài khoản đều được set ID sẵn (Không có tên cá nhân), tài nguyên event còn đủ, cam kết 100% không bị ban.
+              ⚠️ <strong>Lưu ý:</strong> Sẵn 7 000 - 10 000 điểm event mới. Các tài khoản đều được set ID sẵn (Không dùng tên riêng), cam kết 100% không bị ban.
             </p>
             <button className="popup-btn" onClick={() => setShowWelcome(false)}>
               Đã hiểu
